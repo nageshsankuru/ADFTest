@@ -1,0 +1,15 @@
+{
+	"name": "D365_Account",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "D365Connection",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DynamicsEntity",
+		"schema": [],
+		"typeProperties": {
+			"entityName": "account"
+		}
+	}
+}
