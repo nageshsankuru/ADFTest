@@ -1,0 +1,9 @@
+{
+	"name": "daveeduraju",
+	"location": "centralus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "0145cf89-30b2-416e-8e2d-733f9c0d0853",
+		"tenantId": "1a8bf3af-1dcb-4642-b508-8ba9f15d261f"
+	}
+}

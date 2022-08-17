@@ -1,0 +1,82 @@
+{
+	"name": "sql_TEST_1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SqlServer_KV",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "L1_Guid",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "L1_Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "L1_Id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "L0_Guid",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "L0_Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "L0_Id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "L2_Guid",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "L2_Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "L2_Id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "L3_Guid",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "L3_Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "L3_Id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Level",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CatalogueLevel",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Time",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 2
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Test_1"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

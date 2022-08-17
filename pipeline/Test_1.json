@@ -1,0 +1,208 @@
+{
+	"name": "Test_1",
+	"properties": {
+		"activities": [
+			{
+				"name": "test1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ExcelSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						}
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "L1_Guid",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "L1_Guid",
+									"type": "Guid",
+									"physicalType": "uniqueidentifier"
+								}
+							},
+							{
+								"source": {
+									"name": "L1_Name",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "L1_Name",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "L1_Id",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "L1_Id",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Lo_Guid",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "L0_Guid",
+									"type": "Guid",
+									"physicalType": "uniqueidentifier"
+								}
+							},
+							{
+								"source": {
+									"name": "L0_Name",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "L0_Name",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "L0_Id",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "L0_Id",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "L2_Guid",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "L2_Guid",
+									"type": "Guid",
+									"physicalType": "uniqueidentifier"
+								}
+							},
+							{
+								"source": {
+									"name": "L2_Name",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "L2_Name",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "L2_Id",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "L2_Id",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "L3_Guid",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "L3_Guid",
+									"type": "Guid",
+									"physicalType": "uniqueidentifier"
+								}
+							},
+							{
+								"source": {
+									"name": "L3_Name",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "L3_Name",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "L3_Id",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "L3_Id",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "TEST_1",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "sql_TEST_1",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "ToSQL"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-08-17T06:59:39Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,87 @@
+{
+	"name": "TEST_1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "Sheet2",
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Dumy folder.xlsx",
+				"container": "input"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "Lo_Guid",
+				"type": "String"
+			},
+			{
+				"name": "L0_Name",
+				"type": "String"
+			},
+			{
+				"name": "L0_Id",
+				"type": "String"
+			},
+			{
+				"name": "L1_Guid",
+				"type": "String"
+			},
+			{
+				"name": "L1_Name",
+				"type": "String"
+			},
+			{
+				"name": "L1_Id",
+				"type": "String"
+			},
+			{
+				"name": "L2_Guid",
+				"type": "String"
+			},
+			{
+				"name": "L2_Name",
+				"type": "String"
+			},
+			{
+				"name": "L2_Id",
+				"type": "String"
+			},
+			{
+				"name": "L3_Guid",
+				"type": "String"
+			},
+			{
+				"name": "L3_Name",
+				"type": "String"
+			},
+			{
+				"name": "L3_Id",
+				"type": "String"
+			},
+			{
+				"name": "L0_Time",
+				"type": "String"
+			},
+			{
+				"name": "L1_Time",
+				"type": "String"
+			},
+			{
+				"name": "L2_Time",
+				"type": "String"
+			},
+			{
+				"name": "L3_Time",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

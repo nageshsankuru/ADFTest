@@ -1,0 +1,56 @@
+{
+	"name": "AzureSql_Employee_DF",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DF_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "SQL"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "EmpId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DepartmentName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Guid",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "Salary",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 2
+			},
+			{
+				"name": "TimeSpent_Excel",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 2
+			},
+			{
+				"name": "Timespent",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 2
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Employee"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

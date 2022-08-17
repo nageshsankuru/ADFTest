@@ -1,0 +1,71 @@
+{
+	"name": "DF_Blod_SQL",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Input_Blob",
+						"type": "DatasetReference"
+					},
+					"name": "Excel"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSql_Employee_DF",
+						"type": "DatasetReference"
+					},
+					"name": "SQL"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Id as short,",
+				"          Name as string,",
+				"          Guid as string,",
+				"          Salary as double,",
+				"          TimeSpent as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Excel",
+				"Excel derive(Time = toDecimal(replace(TimeSpent, ' hours', ''),18,2) * 3600.00) ~> derivedColumn",
+				"derivedColumn sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          EmpId as integer,",
+				"          Name as string,",
+				"          DepartmentName as string,",
+				"          Guid as string,",
+				"          Salary as decimal(18,2),",
+				"          TimeSpent_Excel as decimal(18,2),",
+				"          Timespent as decimal(18,2)",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          EmpId = Id,",
+				"          Name,",
+				"          Guid,",
+				"          Salary,",
+				"          Timespent = Time,",
+				"          TimeSpent_Excel = TimeSpent",
+				"     )) ~> SQL"
+			]
+		}
+	}
+}

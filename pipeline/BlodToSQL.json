@@ -1,0 +1,37 @@
+{
+	"name": "BlodToSQL",
+	"properties": {
+		"activities": [
+			{
+				"name": "TOSQL",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_Blod_SQL",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "ToSQL"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-08-03T08:59:22Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
