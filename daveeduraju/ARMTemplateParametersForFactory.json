@@ -1,0 +1,36 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "daveeduraju"
+		},
+		"D365Connection_password": {
+			"value": ""
+		},
+		"LS_DF_SQL_connectionString": {
+			"value": ""
+		},
+		"LocalServer_password": {
+			"value": ""
+		},
+		"AzureBlobStorage_properties_typeProperties_connectionString_secretName": {
+			"value": "BlobStorage"
+		},
+		"AzureKeyVault_properties_typeProperties_baseUrl": {
+			"value": "https://AzureKeyvaultDavid.vault.azure.net/"
+		},
+		"D365Connection_properties_typeProperties_username": {
+			"value": "Davidu@1784970tcs.onmicrosoft.com"
+		},
+		"LocalServer_properties_typeProperties_host": {
+			"value": "C:\\Users\\HP\\OneDrive\\Documents\\Downloads"
+		},
+		"LocalServer_properties_typeProperties_userId": {
+			"value": "HP"
+		},
+		"SqlServer_KV_properties_typeProperties_connectionString_secretName": {
+			"value": "KV-SQLConnection"
+		}
+	}
+}

@@ -1,0 +1,105 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "daveeduraju"
+		},
+		"D365Connection_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'D365Connection'"
+		},
+		"LS_DF_SQL_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_DF_SQL'"
+		},
+		"LocalServer_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LocalServer'"
+		},
+		"AzureBlobStorage_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "BlobStorage"
+		},
+		"AzureKeyVault_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://AzureKeyvaultDavid.vault.azure.net/"
+		},
+		"D365Connection_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "Davidu@1784970tcs.onmicrosoft.com"
+		},
+		"LocalServer_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "C:\\Users\\HP\\OneDrive\\Documents\\Downloads"
+		},
+		"LocalServer_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "HP"
+		},
+		"SqlServer_KV_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "KV-SQLConnection"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "daveeduraju_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"D365Connection_password": {
+						"value": "[parameters('D365Connection_password')]"
+					},
+					"LS_DF_SQL_connectionString": {
+						"value": "[parameters('LS_DF_SQL_connectionString')]"
+					},
+					"LocalServer_password": {
+						"value": "[parameters('LocalServer_password')]"
+					},
+					"AzureKeyVault_properties_typeProperties_baseUrl": {
+						"value": "[parameters('AzureKeyVault_properties_typeProperties_baseUrl')]"
+					},
+					"D365Connection_properties_typeProperties_username": {
+						"value": "[parameters('D365Connection_properties_typeProperties_username')]"
+					},
+					"AzureBlobStorage_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('AzureBlobStorage_properties_typeProperties_connectionString_secretName')]"
+					},
+					"LocalServer_properties_typeProperties_host": {
+						"value": "[parameters('LocalServer_properties_typeProperties_host')]"
+					},
+					"LocalServer_properties_typeProperties_userId": {
+						"value": "[parameters('LocalServer_properties_typeProperties_userId')]"
+					},
+					"SqlServer_KV_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('SqlServer_KV_properties_typeProperties_connectionString_secretName')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

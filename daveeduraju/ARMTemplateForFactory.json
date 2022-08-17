@@ -1,0 +1,989 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "daveeduraju"
+		},
+		"D365Connection_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'D365Connection'"
+		},
+		"LS_DF_SQL_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_DF_SQL'"
+		},
+		"LocalServer_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LocalServer'"
+		},
+		"AzureBlobStorage_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "BlobStorage"
+		},
+		"AzureKeyVault_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://AzureKeyvaultDavid.vault.azure.net/"
+		},
+		"D365Connection_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "Davidu@1784970tcs.onmicrosoft.com"
+		},
+		"LocalServer_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "C:\\Users\\HP\\OneDrive\\Documents\\Downloads"
+		},
+		"LocalServer_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "HP"
+		},
+		"SqlServer_KV_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "KV-SQLConnection"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/BlobtoSQL_Copy')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "BlobSQL",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ExcelSource",
+								"additionalColumns": [
+									{
+										"name": "DepatName",
+										"value": "Testing"
+									}
+								],
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Id",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "EmpId",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "Name",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Name",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "DepatName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "DepartmentName",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Guid",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Guid",
+											"type": "Guid",
+											"physicalType": "uniqueidentifier"
+										}
+									},
+									{
+										"source": {
+											"name": "Salary",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Salary",
+											"type": "Decimal",
+											"physicalType": "decimal",
+											"scale": 2,
+											"precision": 18
+										}
+									},
+									{
+										"source": {
+											"name": "TimeSpent",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "TimeSpent_Excel",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Input_Blob",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSql_Employee_DF",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "SetTimeSpent",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "BlobSQL",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dbo].[SetTimeSPent]"
+						},
+						"linkedServiceName": {
+							"referenceName": "SqlServer_KV",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-08-08T15:08:28Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Input_Blob')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSql_Employee_DF')]",
+				"[concat(variables('factoryId'), '/linkedServices/SqlServer_KV')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BlodToSQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "TOSQL",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DF_Blod_SQL",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"Excel": {},
+									"SQL": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "ToSQL"
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-08-03T08:59:22Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/DF_Blod_SQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Test_1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "test1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ExcelSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								}
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "L1_Guid",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "L1_Guid",
+											"type": "Guid",
+											"physicalType": "uniqueidentifier"
+										}
+									},
+									{
+										"source": {
+											"name": "L1_Name",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "L1_Name",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "L1_Id",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "L1_Id",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Lo_Guid",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "L0_Guid",
+											"type": "Guid",
+											"physicalType": "uniqueidentifier"
+										}
+									},
+									{
+										"source": {
+											"name": "L0_Name",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "L0_Name",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "L0_Id",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "L0_Id",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "L2_Guid",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "L2_Guid",
+											"type": "Guid",
+											"physicalType": "uniqueidentifier"
+										}
+									},
+									{
+										"source": {
+											"name": "L2_Name",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "L2_Name",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "L2_Id",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "L2_Id",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "L3_Guid",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "L3_Guid",
+											"type": "Guid",
+											"physicalType": "uniqueidentifier"
+										}
+									},
+									{
+										"source": {
+											"name": "L3_Name",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "L3_Name",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "L3_Id",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "L3_Id",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "TEST_1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "sql_TEST_1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "ToSQL"
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-08-17T06:59:39Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/TEST_1')]",
+				"[concat(variables('factoryId'), '/datasets/sql_TEST_1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSql_Employee_DF')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_DF_SQL",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "SQL"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "EmpId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DepartmentName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Guid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "Salary",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 2
+					},
+					{
+						"name": "TimeSpent_Excel",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 2
+					},
+					{
+						"name": "Timespent",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 2
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Employee"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_DF_SQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Input_Blob')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Input Excel Folder"
+				},
+				"annotations": [],
+				"type": "Excel",
+				"typeProperties": {
+					"sheetName": "Sheet1",
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Dumy folder.xlsx",
+						"container": "input"
+					},
+					"firstRowAsHeader": true
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TEST_1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Excel",
+				"typeProperties": {
+					"sheetName": "Sheet2",
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Dumy folder.xlsx",
+						"container": "input"
+					},
+					"firstRowAsHeader": true
+				},
+				"schema": [
+					{
+						"name": "Lo_Guid",
+						"type": "String"
+					},
+					{
+						"name": "L0_Name",
+						"type": "String"
+					},
+					{
+						"name": "L0_Id",
+						"type": "String"
+					},
+					{
+						"name": "L1_Guid",
+						"type": "String"
+					},
+					{
+						"name": "L1_Name",
+						"type": "String"
+					},
+					{
+						"name": "L1_Id",
+						"type": "String"
+					},
+					{
+						"name": "L2_Guid",
+						"type": "String"
+					},
+					{
+						"name": "L2_Name",
+						"type": "String"
+					},
+					{
+						"name": "L2_Id",
+						"type": "String"
+					},
+					{
+						"name": "L3_Guid",
+						"type": "String"
+					},
+					{
+						"name": "L3_Name",
+						"type": "String"
+					},
+					{
+						"name": "L3_Id",
+						"type": "String"
+					},
+					{
+						"name": "L0_Time",
+						"type": "String"
+					},
+					{
+						"name": "L1_Time",
+						"type": "String"
+					},
+					{
+						"name": "L2_Time",
+						"type": "String"
+					},
+					{
+						"name": "L3_Time",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sql_TEST_1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SqlServer_KV",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "L1_Guid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "L1_Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "L1_Id",
+						"type": "nvarchar"
+					},
+					{
+						"name": "L0_Guid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "L0_Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "L0_Id",
+						"type": "nvarchar"
+					},
+					{
+						"name": "L2_Guid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "L2_Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "L2_Id",
+						"type": "nvarchar"
+					},
+					{
+						"name": "L3_Guid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "L3_Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "L3_Id",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Level",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CatalogueLevel",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Time",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 2
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Test_1"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SqlServer_KV')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureBlobStorage')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "[parameters('AzureBlobStorage_properties_typeProperties_connectionString_secretName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureKeyVault')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('AzureKeyVault_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/D365Connection')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Dynamics",
+				"typeProperties": {
+					"deploymentType": "Online",
+					"serviceUri": "https://bddev.crm8.dynamics.com/",
+					"authenticationType": "Office365",
+					"username": "[parameters('D365Connection_properties_typeProperties_username')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('D365Connection_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_DF_SQL')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('LS_DF_SQL_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LocalServer')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "FileServer",
+				"typeProperties": {
+					"host": "[parameters('LocalServer_properties_typeProperties_host')]",
+					"userId": "[parameters('LocalServer_properties_typeProperties_userId')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('LocalServer_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "IR-SQLServer",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/IR-SQLServer')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SqlServer_KV')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "[parameters('SqlServer_KV_properties_typeProperties_connectionString_secretName')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "IR-SQLServer",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/IR-SQLServer')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/IR-SQLServer')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DF_Blod_SQL')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Input_Blob",
+								"type": "DatasetReference"
+							},
+							"name": "Excel"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureSql_Employee_DF",
+								"type": "DatasetReference"
+							},
+							"name": "SQL"
+						}
+					],
+					"transformations": [
+						{
+							"name": "derivedColumn"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Id as short,",
+						"          Name as string,",
+						"          Guid as string,",
+						"          Salary as double,",
+						"          TimeSpent as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> Excel",
+						"Excel derive(Time = toDecimal(replace(TimeSpent, ' hours', ''),18,2) * 3600.00) ~> derivedColumn",
+						"derivedColumn sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          EmpId as integer,",
+						"          Name as string,",
+						"          DepartmentName as string,",
+						"          Guid as string,",
+						"          Salary as decimal(18,2),",
+						"          TimeSpent_Excel as decimal(18,2),",
+						"          Timespent as decimal(18,2)",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          EmpId = Id,",
+						"          Name,",
+						"          Guid,",
+						"          Salary,",
+						"          Timespent = Time,",
+						"          TimeSpent_Excel = TimeSpent",
+						"     )) ~> SQL"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Input_Blob')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSql_Employee_DF')]"
+			]
+		}
+	]
+}
