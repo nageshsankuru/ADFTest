@@ -1,0 +1,15 @@
+{
+	"name": "Email",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Microsoft365",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Office365Table",
+		"schema": [],
+		"typeProperties": {
+			"tableName": "BasicDataSet_v0.Inbox_v1"
+		}
+	}
+}
