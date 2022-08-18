@@ -1,0 +1,59 @@
+{
+	"name": "pipeline1",
+	"properties": {
+		"activities": [
+			{
+				"name": "OfficeToBlob",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "Office365Source",
+						"dateFilterColumn": "createdDateTime",
+						"startTime": "2022-08-01T00:00:00.000Z",
+						"endTime": "2022-08-18T00:00:00.349Z",
+						"outputColumns": [
+							{
+								"name": "id"
+							},
+							{
+								"name": "attachments"
+							}
+						]
+					},
+					"sink": {
+						"type": "BinarySink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Email",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Binary",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "ToSQL"
+		},
+		"annotations": []
+	}
+}
